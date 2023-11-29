@@ -27,8 +27,7 @@ def clear_face_analyser() -> Any:
 
 
 def get_one_face(frame: Frame, position: int = 0) -> Optional[Face]:
-    many_faces = get_many_faces(frame)
-    if many_faces:
+    if many_faces := get_many_faces(frame):
         try:
             return many_faces[position]
         except IndexError:
@@ -44,8 +43,7 @@ def get_many_faces(frame: Frame) -> Optional[List[Face]]:
 
 
 def find_similar_face(frame: Frame, reference_face: Face) -> Optional[Face]:
-    many_faces = get_many_faces(frame)
-    if many_faces:
+    if many_faces := get_many_faces(frame):
         for face in many_faces:
             if hasattr(face, 'normed_embedding') and hasattr(reference_face, 'normed_embedding'):
                 distance = numpy.sum(numpy.square(face.normed_embedding - reference_face.normed_embedding))

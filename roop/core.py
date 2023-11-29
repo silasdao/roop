@@ -161,9 +161,7 @@ def start() -> None:
     else:
         update_status('Extracting frames with 30 FPS...')
         extract_frames(roop.globals.target_path)
-    # process frame
-    temp_frame_paths = get_temp_frame_paths(roop.globals.target_path)
-    if temp_frame_paths:
+    if temp_frame_paths := get_temp_frame_paths(roop.globals.target_path):
         for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
             update_status('Progressing...', frame_processor.NAME)
             frame_processor.process_video(roop.globals.source_path, temp_frame_paths)

@@ -248,27 +248,28 @@ def init_preview() -> None:
 
 
 def update_preview(frame_number: int = 0) -> None:
-    if roop.globals.source_path and roop.globals.target_path:
-        temp_frame = get_video_frame(roop.globals.target_path, frame_number)
-        if predict_frame(temp_frame):
-            sys.exit()
-        source_face = get_one_face(cv2.imread(roop.globals.source_path))
-        if not get_face_reference():
-            reference_frame = get_video_frame(roop.globals.target_path, roop.globals.reference_frame_number)
-            reference_face = get_one_face(reference_frame, roop.globals.reference_face_position)
-            set_face_reference(reference_face)
-        else:
-            reference_face = get_face_reference()
-        for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
-            temp_frame = frame_processor.process_frame(
-                source_face,
-                reference_face,
-                temp_frame
-            )
-        image = Image.fromarray(cv2.cvtColor(temp_frame, cv2.COLOR_BGR2RGB))
-        image = ImageOps.contain(image, (PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT), Image.LANCZOS)
-        image = ctk.CTkImage(image, size=image.size)
-        preview_label.configure(image=image)
+    if not roop.globals.source_path or not roop.globals.target_path:
+        return
+    temp_frame = get_video_frame(roop.globals.target_path, frame_number)
+    if predict_frame(temp_frame):
+        sys.exit()
+    source_face = get_one_face(cv2.imread(roop.globals.source_path))
+    if not get_face_reference():
+        reference_frame = get_video_frame(roop.globals.target_path, roop.globals.reference_frame_number)
+        reference_face = get_one_face(reference_frame, roop.globals.reference_face_position)
+        set_face_reference(reference_face)
+    else:
+        reference_face = get_face_reference()
+    for frame_processor in get_frame_processors_modules(roop.globals.frame_processors):
+        temp_frame = frame_processor.process_frame(
+            source_face,
+            reference_face,
+            temp_frame
+        )
+    image = Image.fromarray(cv2.cvtColor(temp_frame, cv2.COLOR_BGR2RGB))
+    image = ImageOps.contain(image, (PREVIEW_MAX_WIDTH, PREVIEW_MAX_HEIGHT), Image.LANCZOS)
+    image = ctk.CTkImage(image, size=image.size)
+    preview_label.configure(image=image)
 
 
 def update_face_reference(steps: int) -> None:
